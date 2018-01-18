@@ -1,0 +1,26 @@
+{
+    "name": "chrisullyott/php-url-extractor",
+    "type": "library",
+    "description": "Extract URLs from HTML content.",
+    "homepage": "https://github.com/chrisullyott/php-url-extractor",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Chris Ullyott",
+            "email": "contact@chrisullyott.com",
+            "homepage": "http://www.chrisullyott.com"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/chrisullyott/php-url-extractor/issues",
+        "source": "https://github.com/chrisullyott/php-url-extractor"
+    },
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "autoload": {
+        "classmap": [
+            "src/"
+        ]
+    }
+}
