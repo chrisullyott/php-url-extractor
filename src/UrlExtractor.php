@@ -185,10 +185,12 @@ class UrlExtractor
         foreach ($this->getDom()->getElementsByTagName('*') as $node) {
             if ($node->hasAttributes()) {
                 foreach ($node->attributes as $attr) {
-                    if ($this->isUrlNode($attr) &&
-                        $this->isDesiredUrl($attr->nodeValue)
-                    ) {
-                        $urls[] = $this->makeAbsoluteUrl($attr->nodeValue);
+                    if ($this->isDesiredNode($attr)) {
+                        $value = trim($attr->nodeValue);
+
+                        if ($this->isDesiredUrl($value)) {
+                            $urls[] = $value;
+                        }
                     }
                 }
             }
@@ -198,15 +200,23 @@ class UrlExtractor
     }
 
     /**
+     * @return array
+     */
+    public function getAbsoluteUrls()
+    {
+        $method = array($this, 'makeAbsoluteUrl');
+        $urls = array_filter(array_map($method, $this->getUrls()));
+
+        return array_values($urls);
+    }
+
+    /**
      * @param DOMNode $node
      * @return boolean
      */
-    private function isUrlNode(DOMNode $node)
+    private function isDesiredNode(DOMNode $node)
     {
-        $typeIsCorrect = in_array($node->nodeName, $this->getAttributeFilter());
-        $valueIsUrl = self::isUrl(trim($node->nodeValue));
-
-        return $typeIsCorrect && $valueIsUrl;
+        return in_array($node->nodeName, $this->getAttributeFilter());
     }
 
     /**
@@ -215,6 +225,10 @@ class UrlExtractor
      */
     private function isDesiredUrl($url)
     {
+        if (!self::isUrl($url)) {
+            return false;
+        }
+
         if ($this->getHomeUrl() && !self::isLocalUrl($url, $this->getHomeUrl())) {
             return false;
         }
@@ -232,11 +246,19 @@ class UrlExtractor
      */
     private function makeAbsoluteUrl($url)
     {
-        if ($this->getHomeUrl() && self::isRelativeUrl($url)) {
-            $url = $this->getHomeUrl() . $url;
+        if (!$this->getHomeUrl()) {
+            return null;
         }
 
-        return $url;
+        if (self::isSchemeAgnosticUrl($url)) {
+            return parse_url($this->getHomeUrl(), PHP_URL_SCHEME) . ":{$url}";
+        }
+
+        if (self::isRelativeUrl($url)) {
+            return $this->getHomeUrl() . $url;
+        }
+
+        return null;
     }
 
     /**
@@ -246,7 +268,7 @@ class UrlExtractor
      */
     private static function isLocalUrl($url, $homeUrl)
     {
-        if (self::isRelativeUrl($url)) {
+        if (self::isRelativeUrl($url) && !self::isSchemeAgnosticUrl($url)) {
             return true;
         }
 
@@ -274,6 +296,15 @@ class UrlExtractor
     private static function isRelativeUrl($url)
     {
         return substr($url, 0, 1) === '/';
+    }
+
+    /**
+     * @param string $url
+     * @return boolean
+     */
+    private static function isSchemeAgnosticUrl($url)
+    {
+        return substr($url, 0, 2) === '//';
     }
 
     /**
