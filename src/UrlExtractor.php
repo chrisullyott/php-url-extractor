@@ -282,7 +282,7 @@ class UrlExtractor
      */
     private static function isAbsoluteUrl($url)
     {
-        return filter_var($url, FILTER_VALIDATE_URL);
+        return (bool) filter_var($url, FILTER_VALIDATE_URL);
     }
 
     /**
