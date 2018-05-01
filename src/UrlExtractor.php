@@ -155,9 +155,6 @@ class UrlExtractor
         libxml_use_internal_errors(true);
 
         $dom = new DOMDocument('1.0', 'UTF-8');
-        $dom->preserveWhiteSpace = false;
-        $dom->formatOutput = true;
-
         $dom->loadHTML($html);
 
         return $dom;
