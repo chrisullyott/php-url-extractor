@@ -180,14 +180,12 @@ class UrlExtractor
         $urls = array();
 
         foreach ($this->getDom()->getElementsByTagName('*') as $node) {
-            if ($node->hasAttributes()) {
-                foreach ($node->attributes as $attr) {
-                    if ($this->isDesiredNode($attr)) {
-                        $value = trim($attr->nodeValue);
+            foreach ($node->attributes as $attr) {
+                if ($this->isDesiredNode($attr)) {
+                    $value = trim($attr->nodeValue);
 
-                        if ($this->isDesiredUrl($value)) {
-                            $urls[] = $value;
-                        }
+                    if ($this->isDesiredUrl($value)) {
+                        $urls[] = $value;
                     }
                 }
             }
