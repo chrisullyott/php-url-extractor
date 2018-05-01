@@ -30,6 +30,13 @@ class UrlExtractor
     private $filesOnly = false;
 
     /**
+     * File URL extensions to exclude.
+     *
+     * @var array
+     */
+    private $ignoredExtensions = array();
+
+    /**
      * An array of HTML tag attributes to read.
      *
      * @var array
@@ -120,6 +127,25 @@ class UrlExtractor
     public function getFilesOnly()
     {
         return $this->filesOnly;
+    }
+
+    /**
+     * @param array $ignoredExtensions
+     * @return self
+     */
+    public function setIgnoredExtensions(array $ignoredExtensions)
+    {
+        $this->ignoredExtensions = array_map('strtolower', $ignoredExtensions);
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getIgnoredExtensions()
+    {
+        return $this->ignoredExtensions;
     }
 
     /**
@@ -232,6 +258,10 @@ class UrlExtractor
             return false;
         }
 
+        if (in_array(self::getExtension($url), $this->getIgnoredExtensions())) {
+            return false;
+        }
+
         return true;
     }
 
@@ -337,5 +367,17 @@ class UrlExtractor
     private static function wrap($string, $wrapper)
     {
         return $wrapper . $string . $wrapper;
+    }
+
+    /**
+     * @param string $url
+     * @return string
+     */
+    private static function getExtension($url)
+    {
+        $ext = pathinfo($url, PATHINFO_EXTENSION);
+        $ext = strtok($ext, '?');
+
+        return strtolower($ext);
     }
 }
