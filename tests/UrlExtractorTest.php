@@ -1,7 +1,5 @@
 <?php
 
-require_once '../src/UrlExtractor.php';
-
 use PHPUnit\Framework\TestCase;
 
 class UrlExtractorTest extends TestCase
@@ -78,6 +76,23 @@ class UrlExtractorTest extends TestCase
         foreach ($urls as $url) {
             $isValid = (bool) filter_var($url, FILTER_VALIDATE_URL);
             $this->assertTrue($isValid);
+        }
+    }
+
+    /**
+     * File extensions are filtered.
+     */
+    public function testIgnoredExtensions()
+    {
+        $ignoredExtensions = array('jpg', 'jpeg', 'png', 'gif');
+
+        $this->getUrlExtractor()->setIgnoredExtensions($ignoredExtensions);
+
+        $urls = $this->getUrlExtractor()->getUrls();
+
+        foreach ($urls as $url) {
+            $ext = strtolower(strtok(pathinfo($url, PATHINFO_EXTENSION), '/'));
+            $this->assertTrue(!in_array($ext, $ignoredExtensions));
         }
     }
 }

@@ -30,6 +30,13 @@ class UrlExtractor
     private $filesOnly = false;
 
     /**
+     * File URL extensions to exclude.
+     *
+     * @var array
+     */
+    private $ignoredExtensions = array();
+
+    /**
      * An array of HTML tag attributes to read.
      *
      * @var array
@@ -123,6 +130,25 @@ class UrlExtractor
     }
 
     /**
+     * @param array $ignoredExtensions
+     * @return self
+     */
+    public function setIgnoredExtensions(array $ignoredExtensions)
+    {
+        $this->ignoredExtensions = array_map('strtolower', $ignoredExtensions);
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getIgnoredExtensions()
+    {
+        return $this->ignoredExtensions;
+    }
+
+    /**
      * @param array $attributeFilter
      * @return self
      */
@@ -155,9 +181,6 @@ class UrlExtractor
         libxml_use_internal_errors(true);
 
         $dom = new DOMDocument('1.0', 'UTF-8');
-        $dom->preserveWhiteSpace = false;
-        $dom->formatOutput = true;
-
         $dom->loadHTML($html);
 
         return $dom;
@@ -183,14 +206,12 @@ class UrlExtractor
         $urls = array();
 
         foreach ($this->getDom()->getElementsByTagName('*') as $node) {
-            if ($node->hasAttributes()) {
-                foreach ($node->attributes as $attr) {
-                    if ($this->isDesiredNode($attr)) {
-                        $value = trim($attr->nodeValue);
+            foreach ($node->attributes as $attr) {
+                if ($this->isDesiredNode($attr)) {
+                    $value = trim($attr->nodeValue);
 
-                        if ($this->isDesiredUrl($value)) {
-                            $urls[] = $value;
-                        }
+                    if ($this->isDesiredUrl($value)) {
+                        $urls[] = $value;
                     }
                 }
             }
@@ -234,6 +255,10 @@ class UrlExtractor
         }
 
         if ($this->getFilesOnly() && !self::isFileUrl($url)) {
+            return false;
+        }
+
+        if (in_array(self::getExtension($url), $this->getIgnoredExtensions())) {
             return false;
         }
 
@@ -342,5 +367,17 @@ class UrlExtractor
     private static function wrap($string, $wrapper)
     {
         return $wrapper . $string . $wrapper;
+    }
+
+    /**
+     * @param string $url
+     * @return string
+     */
+    private static function getExtension($url)
+    {
+        $ext = pathinfo($url, PATHINFO_EXTENSION);
+        $ext = strtok($ext, '?');
+
+        return strtolower($ext);
     }
 }
