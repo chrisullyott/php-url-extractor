@@ -1,7 +1,5 @@
 <?php
 
-require_once '../src/UrlExtractor.php';
-
 use PHPUnit\Framework\TestCase;
 
 class UrlExtractorTest extends TestCase
