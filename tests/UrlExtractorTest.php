@@ -7,43 +7,39 @@ class UrlExtractorTest extends TestCase
     /**
      * @var UrlExtractor
      */
-    private $urlExtractor;
+    public $urlExtractor;
 
     /**
      * @var string
      */
-    private $file = 'page.html';
+    public $file = __DIR__ . DIRECTORY_SEPARATOR . 'page.html';
+
+    /**
+     * Set up.
+     */
+    public function setUp()
+    {
+        $this->urlExtractor = new UrlExtractor($this->getHtml());
+        $this->urlExtractor->setHomeUrl('http://mk036.monkpreview.com');
+        $this->urlExtractor->setFilesOnly(true);
+    }
 
     /**
      * @return string
      */
-    private function getHtml()
+    public function getHtml()
     {
         return file_get_contents($this->file);
     }
 
     /**
-     * @return UrlExtractor
-     */
-    private function getUrlExtractor()
-    {
-        if (!$this->urlExtractor) {
-            $this->urlExtractor = new UrlExtractor($this->getHtml());
-            $this->urlExtractor->setHomeUrl('https://en.wikipedia.org');
-            $this->urlExtractor->setFilesOnly(true);
-        }
-
-        return $this->urlExtractor;
-    }
-
-    /**
-     * The home URL should only include links with the scheme defined.
+     * The home URL should be an absolute URL.
      */
     public function testSetHomeUrlException()
     {
         $this->expectException(Exception::class);
 
-        $this->getUrlExtractor()->setHomeUrl('www.bad-url.com');
+        $this->urlExtractor->setHomeUrl('www.bad-url.com');
     }
 
     /**
@@ -51,7 +47,7 @@ class UrlExtractorTest extends TestCase
      */
     public function testGetUrls()
     {
-        $urls = $this->getUrlExtractor()->getUrls();
+        $urls = $this->urlExtractor->getUrls();
 
         $this->assertTrue(count($urls) > 3);
     }
@@ -61,7 +57,7 @@ class UrlExtractorTest extends TestCase
      */
     public function testGetAbsoluteUrls()
     {
-        $urls = $this->getUrlExtractor()->getAbsoluteUrls();
+        $urls = $this->urlExtractor->getAbsoluteUrls();
 
         $this->assertTrue(count($urls) > 3);
     }
@@ -71,7 +67,7 @@ class UrlExtractorTest extends TestCase
      */
     public function testAbsoluteUrlsAreValid()
     {
-        $urls = $this->getUrlExtractor()->getAbsoluteUrls();
+        $urls = $this->urlExtractor->getAbsoluteUrls();
 
         foreach ($urls as $url) {
             $isValid = (bool) filter_var($url, FILTER_VALIDATE_URL);
@@ -86,13 +82,15 @@ class UrlExtractorTest extends TestCase
     {
         $ignoredExtensions = array('jpg', 'jpeg', 'png', 'gif');
 
-        $this->getUrlExtractor()->setIgnoredExtensions($ignoredExtensions);
+        $this->urlExtractor->setIgnoredExtensions($ignoredExtensions);
 
-        $urls = $this->getUrlExtractor()->getUrls();
+        $urls = $this->urlExtractor->getUrls();
 
         foreach ($urls as $url) {
             $ext = strtolower(strtok(pathinfo($url, PATHINFO_EXTENSION), '/'));
             $this->assertTrue(!in_array($ext, $ignoredExtensions));
         }
+
+        $this->urlExtractor->setIgnoredExtensions(array());
     }
 }
