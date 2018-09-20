@@ -51,6 +51,7 @@ class UrlExtractor
     private static $defaultAttributeFilter = array(
         'src',
         'href',
+        'content',
         'poster'
     );
 
