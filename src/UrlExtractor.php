@@ -366,8 +366,8 @@ class UrlExtractor
      */
     private static function getExtension($url)
     {
-        $ext = pathinfo($url, PATHINFO_EXTENSION);
-        $ext = strtok($ext, '?');
+        $path = parse_url($url, PHP_URL_PATH);
+        $ext = pathinfo($path, PATHINFO_EXTENSION);
 
         return strtolower($ext);
     }
