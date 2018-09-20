@@ -360,16 +360,6 @@ class UrlExtractor
     }
 
     /**
-     * @param string $string
-     * @param string $wrapper
-     * @return string
-     */
-    private static function wrap($string, $wrapper)
-    {
-        return $wrapper . $string . $wrapper;
-    }
-
-    /**
      * @param string $url
      * @return string
      */
