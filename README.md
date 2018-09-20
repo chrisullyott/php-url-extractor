@@ -7,9 +7,7 @@ Extract URLs from HTML content, optionally filtering for local and/or file URLs.
 Install with Composer:
 
 ```
-"require": {
-    "chrisullyott/php-url-extractor": "dev-master"
-}
+$ composer require chrisullyott/php-url-extractor dev-master
 ```
 
 ## Usage
@@ -26,10 +24,13 @@ print_r($urls);
 ```
 
 ```
-Array
 (
-    [0] => http://www.site.com/images/billboard.jpg
-    [1] => http://www.site.com/docs/presentation.pdf
-    [2] => http://www.site.com/assets/js/global.js
-)
+    [0] => stdClass Object
+        (
+            [attribute] => href
+            [value] => /_assets/img/icons/favicon-96.png
+            [url] => https://www.site.com/_assets/img/icons/favicon-96.png
+        )
+
+    ...
 ```
