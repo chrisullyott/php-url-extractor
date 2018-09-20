@@ -53,24 +53,14 @@ class UrlExtractorTest extends TestCase
     }
 
     /**
-     * @depends testGetUrls
-     */
-    public function testGetAbsoluteUrls()
-    {
-        $urls = $this->urlExtractor->getAbsoluteUrls();
-
-        $this->assertTrue(count($urls) > 3);
-    }
-
-    /**
      * The absolute URLs returned should all be valid.
      */
     public function testAbsoluteUrlsAreValid()
     {
-        $urls = $this->urlExtractor->getAbsoluteUrls();
+        $urls = $this->urlExtractor->getUrls();
 
         foreach ($urls as $url) {
-            $isValid = (bool) filter_var($url, FILTER_VALIDATE_URL);
+            $isValid = (bool) filter_var($url->url, FILTER_VALIDATE_URL);
             $this->assertTrue($isValid);
         }
     }
@@ -87,7 +77,9 @@ class UrlExtractorTest extends TestCase
         $urls = $this->urlExtractor->getUrls();
 
         foreach ($urls as $url) {
-            $ext = strtolower(strtok(pathinfo($url, PATHINFO_EXTENSION), '/'));
+            $path = parse_url($url->value, PHP_URL_PATH);
+            $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+
             $this->assertTrue(!in_array($ext, $ignoredExtensions));
         }
 
