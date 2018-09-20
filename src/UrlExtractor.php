@@ -284,7 +284,7 @@ class UrlExtractor
             return $this->getHomeUrl() . $url;
         }
 
-        return null;
+        return $url;
     }
 
     /**
