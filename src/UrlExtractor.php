@@ -288,6 +288,15 @@ class UrlExtractor
 
     /**
      * @param string $url
+     * @return boolean
+     */
+    private function isUrl($url)
+    {
+        return self::isRelativeUrl($url) || self::isAbsoluteUrl($url);
+    }
+
+    /**
+     * @param string $url
      * @param string $homeUrl
      * @return boolean
      */
@@ -339,15 +348,6 @@ class UrlExtractor
     private static function isAbsoluteUrl($url)
     {
         return (bool) filter_var($url, FILTER_VALIDATE_URL);
-    }
-
-    /**
-     * @param string $url
-     * @return boolean
-     */
-    private function isUrl($url)
-    {
-        return self::isRelativeUrl($url) || self::isAbsoluteUrl($url);
     }
 
     /**
