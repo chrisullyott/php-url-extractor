@@ -34,26 +34,26 @@ class UrlExtractor
      *
      * @var array
      */
-    private $ignoredExtensions = array();
+    private $ignoredExtensions = [];
 
     /**
      * An array of HTML tag attributes to read.
      *
      * @var array
      */
-    private $attributeFilter = array();
+    private $attributeFilter = [];
 
     /**
      * Default array of HTML attributes to read.
      *
      * @var array
      */
-    private static $defaultAttributeFilter = array(
+    private static $defaultAttributeFilter = [
         'src',
         'href',
         'content',
         'poster'
-    );
+    ];
 
     /**
      * @var DOMDocument
@@ -200,7 +200,7 @@ class UrlExtractor
      */
     public function getUrls()
     {
-        $items = array();
+        $items = [];
 
         foreach ($this->getDom()->getElementsByTagName('*') as $node) {
             foreach ($node->attributes as $attr) {
