@@ -155,10 +155,6 @@ class UrlExtractor
      */
     public function setAttributeFilter(array $attributeFilter)
     {
-        if (!$attributeFilter) {
-            $attributeFilter = static::$defaultAttributeFilter;
-        }
-
         $this->attributeFilter = $attributeFilter;
 
         return $this;
