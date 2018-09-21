@@ -70,7 +70,7 @@ class UrlExtractorTest extends TestCase
      */
     public function testIgnoredExtensions()
     {
-        $ignoredExtensions = array('jpg', 'jpeg', 'png', 'gif');
+        $ignoredExtensions = ['jpg', 'jpeg', 'png', 'gif'];
 
         $this->urlExtractor->setIgnoredExtensions($ignoredExtensions);
 
@@ -83,6 +83,6 @@ class UrlExtractorTest extends TestCase
             $this->assertTrue(!in_array($ext, $ignoredExtensions));
         }
 
-        $this->urlExtractor->setIgnoredExtensions(array());
+        $this->urlExtractor->setIgnoredExtensions([]);
     }
 }
