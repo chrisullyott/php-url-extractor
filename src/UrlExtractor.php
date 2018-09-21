@@ -198,26 +198,41 @@ class UrlExtractor
     /**
      * @return array
      */
+    private function getAttributeNodes()
+    {
+        $nodes = [];
+        $elements = $this->getDom()->getElementsByTagName('*');
+
+        foreach ($elements as $element) {
+            foreach ($element->attributes as $attr) {
+                if ($this->isDesiredNode($attr)) {
+                    $nodes[] = $attr;
+                }
+            }
+        }
+
+        return $nodes;
+    }
+
+    /**
+     * @return array
+     */
     public function getUrls()
     {
         $items = [];
 
-        foreach ($this->getDom()->getElementsByTagName('*') as $node) {
-            foreach ($node->attributes as $attr) {
-                if ($this->isDesiredNode($attr)) {
-                    if ($this->isDesiredUrl($attr->nodeValue)) {
-                        $item = [
-                            'attribute' => $attr->nodeName,
-                            'value' => $attr->nodeValue
-                        ];
+        foreach ($this->getAttributeNodes() as $attr) {
+            if ($this->isDesiredUrl($attr->nodeValue)) {
+                $item = [
+                    'attribute' => $attr->nodeName,
+                    'value' => $attr->nodeValue
+                ];
 
-                        if ($this->getHomeUrl()) {
-                            $item['url'] = $this->makeAbsoluteUrl($attr->nodeValue);
-                        }
-
-                        $items[] = (object) $item;
-                    }
+                if ($this->getHomeUrl()) {
+                    $item['url'] = $this->makeAbsoluteUrl($attr->nodeValue);
                 }
+
+                $items[] = (object) $item;
             }
         }
 
