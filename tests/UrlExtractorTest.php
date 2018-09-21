@@ -66,6 +66,29 @@ class UrlExtractorTest extends TestCase
     }
 
     /**
+     * Our URLs should include items from our alternate domain patterns.
+     */
+    public function testUseOfDomainPatterns()
+    {
+        $successful = false;
+        $domainPattern = '/.*\.rackcdn\.com/';
+        $this->urlExtractor->setAlternateDomains([$domainPattern]);
+        $urls = $this->urlExtractor->getUrls();
+
+        foreach ($urls as $url) {
+            $host = parse_url($url->url, PHP_URL_HOST);
+
+            if (preg_match($domainPattern, $host)) {
+                $successful = true;
+                break;
+            }
+        }
+
+        $this->assertTrue($successful);
+        $this->urlExtractor->setAlternateDomains([]);
+    }
+
+    /**
      * File extensions are filtered.
      */
     public function testIgnoredExtensions()

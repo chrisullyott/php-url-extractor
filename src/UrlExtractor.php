@@ -23,6 +23,14 @@ class UrlExtractor
     private $homeUrl = '';
 
     /**
+     * Domains of desired URLs other than the home domain.
+     * Use strings or /regex/ patterns.
+     *
+     * @var array
+     */
+    private $alternateDomains = [];
+
+    /**
      * Whether to extract only file URLs.
      *
      * @var boolean
@@ -109,6 +117,24 @@ class UrlExtractor
     public function getHomeUrl()
     {
         return $this->homeUrl;
+    }
+
+    /**
+     * @return self
+     */
+    public function setAlternateDomains(array $alternateDomains)
+    {
+        $this->alternateDomains = $alternateDomains;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAlternateDomains()
+    {
+        return $this->alternateDomains;
     }
 
     /**
@@ -258,8 +284,13 @@ class UrlExtractor
             return false;
         }
 
-        if ($this->getHomeUrl() && !self::isLocalUrl($url, $this->getHomeUrl())) {
-            return false;
+        if ($this->getHomeUrl()) {
+            $isLocal = self::isLocalUrl($url, $this->getHomeUrl());
+            $isAlternateDomain = $this->isAlternateDomainUrl($url);
+
+            if (!$isLocal && !$isAlternateDomain) {
+                return false;
+            }
         }
 
         if ($this->getFilesOnly() && !self::isFileUrl($url)) {
@@ -318,6 +349,29 @@ class UrlExtractor
         $localDomain = self::stripWWW(parse_url($homeUrl, PHP_URL_HOST));
 
         return $urlDomain === $localDomain;
+    }
+
+    /**
+     * @param string $url
+     * @return boolean
+     */
+    private function isAlternateDomainUrl($url)
+    {
+        if ($host = parse_url($url, PHP_URL_HOST)) {
+            foreach ($this->getAlternateDomains() as $domain) {
+                if (preg_match('/^\/.*\/$/', $domain)) {
+                    if (preg_match($domain, $host)) {
+                        return true;
+                    }
+                } else {
+                    if ($host === $domain) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
