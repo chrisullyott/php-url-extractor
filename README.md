@@ -1,5 +1,8 @@
 # php-url-extractor
 
+[![Latest Stable Version](https://poser.pugx.org/chrisullyott/php-url-extractor/v/stable)](https://packagist.org/packages/chrisullyott/php-url-extractor)
+[![Total Downloads](https://poser.pugx.org/chrisullyott/php-url-extractor/downloads)](https://packagist.org/packages/chrisullyott/php-url-extractor)
+
 Extract URLs from HTML content, applying optional filters.
 
 ## Installation
